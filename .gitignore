@@ -1,0 +1,58 @@
+.vercel
+# ----------------------------
+# Node.js
+# ----------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.*.local
+
+# Logs
+logs
+*.log
+*.log.*
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Compiled output
+dist/
+build/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.iml
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Lock files (optional — ถ้าไม่อยาก commit)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ----------------------------
+# Vercel specific
+# ----------------------------
+.vercel/
+
+# ----------------------------
+# Optional (ถ้าใช้ TypeScript)
+# ----------------------------
+*.tsbuildinfo
