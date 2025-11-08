@@ -1,15 +1,9 @@
 {
   "version": 2,
-  "functions": {
-    "index.js": {
-      "includeFiles": "node_modules/axios/**"
-    }
-  },
   "builds": [
     {
       "src": "index.js",
-      "use": "@vercel/node",
-      "config": { "bundle": false }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
