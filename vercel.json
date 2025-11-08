@@ -1,7 +1,19 @@
 {
   "version": 2,
+  "functions": {
+    "index.js": {
+      "includeFiles": [
+        "node_modules/axios/**/*",
+        "node_modules/puppeteer/**/*"
+      ]
+    }
+  },
   "builds": [
-    { "src": "index.js", "use": "@vercel/node" }
+    {
+      "src": "index.js",
+      "use": "@vercel/node",
+      "config": { "bundle": false }
+    }
   ],
   "routes": [
     { "src": "/(.*)", "dest": "index.js" }
