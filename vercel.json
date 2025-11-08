@@ -2,10 +2,7 @@
   "version": 2,
   "functions": {
     "index.js": {
-      "includeFiles": [
-        "node_modules/axios/**/*",
-        "node_modules/puppeteer/**/*"
-      ]
+      "includeFiles": "node_modules/axios/**"
     }
   },
   "builds": [
