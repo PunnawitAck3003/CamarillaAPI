@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  scrapeTfexIntraday,
   fetchHistoricalData,
   summarizeTfexData,
 } from "../services/tfexService.js";
@@ -8,15 +7,15 @@ import {
 const router = express.Router();
 
 // intraday data
-router.get("/s50z25", async (req, res) => {
-  try {
-    const data = await scrapeTfexIntraday();
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to scrape TFEX data" });
-  }
-});
+// router.get("/s50z25", async (req, res) => {
+//   try {
+//     const data = await scrapeTfexIntraday();
+//     res.json(data);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "Failed to scrape TFEX data" });
+//   }
+// });
 
 // historical data
 router.get("/:symbol/historical", async (req, res) => {

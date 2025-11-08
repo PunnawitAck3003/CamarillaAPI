@@ -1,4 +1,4 @@
-import axios from "axios";
+// import axios from "axios";
 import * as cheerio from "cheerio";
 import puppeteer from "puppeteer";
 import { autoScroll } from "../utils/puppeteerUtils.js";
@@ -10,27 +10,27 @@ import {
 } from "../utils/dateUtils.js";
 import { generateCamarillaLevels } from "./camarillaService.js";
 
-export async function scrapeTfexIntraday() {
-  const url = "https://www.tfex.co.th/th/products/equity/set50-index-futures/S50Z25/intraday";
-  const { data } = await axios.get(url, { headers: { "User-Agent": "Mozilla/5.0" } });
-  const $ = cheerio.load(data);
+// export async function scrapeTfexIntraday() {
+//   const url = "https://www.tfex.co.th/th/products/equity/set50-index-futures/S50Z25/intraday";
+//   const { data } = await axios.get(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+//   const $ = cheerio.load(data);
 
-  const high = $("label:contains('ราคาสูงสุด')").parent().find(".price").text().trim();
-  const low = $("label:contains('ราคาต่ำสุด')").parent().find(".price").text().trim();
-  const open = $("label:contains('ราคาเปิด')").parent().find(".price").text().trim();
-  const close = $(".lastest").first().text().trim();
-  const settlement = $("label:contains('ราคาที่ใช้ชำระราคา')").last().parent().find(".price").text().trim();
+//   const high = $("label:contains('ราคาสูงสุด')").parent().find(".price").text().trim();
+//   const low = $("label:contains('ราคาต่ำสุด')").parent().find(".price").text().trim();
+//   const open = $("label:contains('ราคาเปิด')").parent().find(".price").text().trim();
+//   const close = $(".lastest").first().text().trim();
+//   const settlement = $("label:contains('ราคาที่ใช้ชำระราคา')").last().parent().find(".price").text().trim();
 
-  return {
-    high,
-    low,
-    open,
-    close,
-    settlement: parseFloat(settlement).toFixed(1),
-    range: (parseFloat(high) - parseFloat(low)).toFixed(1),
-    scrapedAt: new Date().toISOString(),
-  };
-}
+//   return {
+//     high,
+//     low,
+//     open,
+//     close,
+//     settlement: parseFloat(settlement).toFixed(1),
+//     range: (parseFloat(high) - parseFloat(low)).toFixed(1),
+//     scrapedAt: new Date().toISOString(),
+//   };
+// }
 
 export async function fetchHistoricalData(symbol) {
   const upperSymbol = symbol.toUpperCase();
