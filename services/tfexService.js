@@ -1,6 +1,7 @@
 // import axios from "axios";
 import * as cheerio from "cheerio";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import { autoScroll } from "../utils/puppeteerUtils.js";
 import {
   convertThaiDate,
@@ -32,6 +33,19 @@ import { generateCamarillaLevels } from "./camarillaService.js";
 //   };
 // }
 
+/**
+ * Launch Puppeteer in a Vercel-safe environment
+ */
+async function launchBrowser() {
+  return await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  });
+}
+
+
 export async function fetchHistoricalData(symbol) {
   const upperSymbol = symbol.toUpperCase();
   const urlMap = {
@@ -43,49 +57,51 @@ export async function fetchHistoricalData(symbol) {
   const url = urlMap[prefix];
   if (!url) throw new Error(`Unsupported symbol prefix: ${prefix}`);
 
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await launchBrowser();
   const page = await browser.newPage();
-  await page.goto(url, { waitUntil: "networkidle2" });
-  await page.waitForSelector("table.b-table");
-  await autoScroll(page);
+try {
+    await page.goto(url, { waitUntil: "networkidle2" });
+    await page.waitForSelector("table.b-table");
+    await autoScroll(page);
 
-  const data = await page.evaluate(() => {
-    const rows = Array.from(document.querySelectorAll("table.b-table tbody tr"));
-    return rows.map((row) => {
-      const cols = Array.from(row.querySelectorAll("td span")).map((c) =>
-        c.innerText.trim()
-      );
-      const toNumber = (str) => {
-        const cleaned = str.replace(/,/g, "").replace(/[^\d.-]/g, "");
-        const num = parseFloat(cleaned);
-        return isNaN(num) ? null : num;
-      };
-      const high = toNumber(cols[2]);
-      const low = toNumber(cols[3]);
-      return {
-        date: cols[0],
-        open: toNumber(cols[1]),
-        high,
-        low,
-        close: toNumber(cols[4]),
-        settlement: toNumber(cols[5]),
-        change: cols[6],
-        changePercent: cols[7],
-        volume: cols[8],
-        openInterest: cols[9],
-        range: isNaN(high) || isNaN(low) ? null : +(high - low).toFixed(2),
-      };
+    const data = await page.evaluate(() => {
+      const rows = Array.from(document.querySelectorAll("table.b-table tbody tr"));
+      return rows.map((row) => {
+        const cols = Array.from(row.querySelectorAll("td span")).map((c) =>
+          c.innerText.trim()
+        );
+        const toNumber = (str) => {
+          const cleaned = str.replace(/,/g, "").replace(/[^\d.-]/g, "");
+          const num = parseFloat(cleaned);
+          return isNaN(num) ? null : num;
+        };
+        const high = toNumber(cols[2]);
+        const low = toNumber(cols[3]);
+        return {
+          date: cols[0],
+          open: toNumber(cols[1]),
+          high,
+          low,
+          close: toNumber(cols[4]),
+          settlement: toNumber(cols[5]),
+          change: cols[6],
+          changePercent: cols[7],
+          volume: cols[8],
+          openInterest: cols[9],
+          range: isNaN(high) || isNaN(low) ? null : +(high - low).toFixed(2),
+        };
+      });
     });
-  });
 
-  await browser.close();
-
-  return {
-    scrapedAt: new Date().toISOString(),
-    symbol: upperSymbol,
-    count: data.length,
-    data,
-  };
+    return {
+      scrapedAt: new Date().toISOString(),
+      symbol: upperSymbol,
+      count: data.length,
+      data,
+    };
+  } finally {
+    await browser.close();
+  }
 }
 
 export async function summarizeTfexData(symbol) {
