@@ -10,6 +10,7 @@ import {
   formatDate,
 } from "../utils/dateUtils.js";
 import { generateCamarillaLevels } from "./camarillaService.js";
+import { getHistoricalFromDB } from "./tfexDbService.js";
 
 // export async function scrapeTfexIntraday() {
 //   const url = "https://www.tfex.co.th/th/products/equity/set50-index-futures/S50Z25/intraday";
@@ -129,22 +130,22 @@ try {
 }
 
 export async function summarizeTfexData(symbol) {
-  const hist = await fetchHistoricalData(symbol);
-  const records = hist.data;
+  const records  = await getHistoricalFromDB(symbol);
 
-  if (!records || records.length < 2) throw new Error("Not enough data");
+  if (!records || records.length < 2) {
+    throw new Error("Not enough historical records in database");
+  }
 
   const latest = records[0];
   const prev = records[1];
   const trend = latest.range >= prev.range ? "In" : "Out";
-  const nextDate = getNextTradingDay(latest.date);
-  const latestDate = convertThaiDate(latest.date);
+  const nextDate = getNextTradingDay(latest.dateStr);
+  const latestDate = convertThaiDate(latest.dateStr);
   const latestDay = getEngDayName(latestDate);
   const { high, low, close, settlement } = latest;
   const levels = generateCamarillaLevels(high, low, settlement);
 
   return {
-    scrapedAt: hist.scrapedAt,
     symbol: symbol.toUpperCase(),
     trend,
     latest: {
