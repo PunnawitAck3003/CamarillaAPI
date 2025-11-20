@@ -3,6 +3,8 @@ import cors from "cors";
 import { limiter } from "./utils/rateLimiter.js";
 import camarillaRoutes from "./routes/camarillaRoutes.js";
 import tfexRoutes from "./routes/tfexRoutes.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 

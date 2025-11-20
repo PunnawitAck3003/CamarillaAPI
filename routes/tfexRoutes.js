@@ -3,6 +3,10 @@ import {
   fetchHistoricalData,
   summarizeTfexData,
 } from "../services/tfexService.js";
+import {
+  scrapeAndSaveHistorical,
+  getHistoricalFromDB
+} from "../services/tfexDbService.js";
 
 const router = express.Router();
 
@@ -38,5 +42,27 @@ router.get("/:symbol/summary", async (req, res) => {
     res.status(500).json({ error: "Failed to generate summary" });
   }
 });
+
+router.get("/:symbol/scrape-save", async (req, res) => {
+  try {
+    const { symbol } = req.params;
+    const result = await scrapeAndSaveHistorical(symbol);
+    res.json({ saved: result.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/:symbol/db", async (req, res) => {
+  try {
+    const { symbol } = req.params;
+    const data = await getHistoricalFromDB(symbol);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 export default router;

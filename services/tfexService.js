@@ -36,13 +36,37 @@ import { generateCamarillaLevels } from "./camarillaService.js";
 /**
  * Launch Puppeteer in a Vercel-safe environment
  */
+// async function launchBrowser() {
+//   return await puppeteer.launch({
+//     args: chromium.args,
+//     defaultViewport: chromium.defaultViewport,
+//     executablePath: await chromium.executablePath(),
+//     headless: chromium.headless,
+//   });
+// }
+
 async function launchBrowser() {
-  return await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-  });
+  const isProd = process.env.NODE_ENV === "production";
+
+  if (isProd) {
+    // ----------- Production: Vercel -----------
+    const chromium = (await import("@sparticuz/chromium")).default;
+    const puppeteer = await import("puppeteer-core");
+
+    return await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(), // ใช้ Chromium ของ Vercel
+      headless: chromium.headless,
+    });
+  } else {
+    // ----------- Development: Local machine -----------
+    const puppeteer = await import("puppeteer");
+
+    return await puppeteer.launch({
+      headless: true, // Dev จะใช้ Chromium ที่ Puppeteer bundle มาให้
+    });
+  }
 }
 
 
