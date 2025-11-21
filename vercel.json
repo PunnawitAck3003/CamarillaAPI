@@ -12,11 +12,11 @@
   "crons": [
     {
       "path": "/api/v1/tfex/s50z25/scrape-save",
-      "schedule": "0,30 21-23 * * *"
+      "schedule": "0 23 * * *"
     },
     {
       "path": "/api/v1/tfex/goz25/scrape-save",
-      "schedule": "15,45 21-23 * * *"
+      "schedule": "0 22 * * *"
     }
   ]
 }
